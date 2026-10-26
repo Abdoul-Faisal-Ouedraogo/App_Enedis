@@ -19,3 +19,9 @@ htmlcov/
 *.log
 .DS_Store
 Thumbs.db
+
+mlflow.db
+mlruns/
+
+data/
+output/

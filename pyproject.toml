@@ -1,0 +1,19 @@
+[project]
+name = "sise-enedis-ml-study"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "datetime>=5.5",
+    "ipykernel>=7.0.1",
+    "ipynb>=0.5.1",
+    "ipywidgets>=8.1.7",
+    "matplotlib>=3.10.7",
+    "mlflow>=3.5.1",
+    "pandas>=2.3.3",
+    "requests>=2.32.5",
+    "scikit-learn>=1.7.2",
+    "seaborn>=0.13.2",
+    "xgboost>=3.1.1",
+]
