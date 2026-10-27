@@ -1,0 +1,18 @@
+services:
+  ml-enedis:
+    build: .
+    container_name: ml-enedis-app
+    ports:
+      - "8501:8501"   # Streamlit
+      - "8000:8000"   # FastAPI (utile pour consulter /docs, optionnel)
+    volumes:
+      - ./data:/app/data
+      - ./MLmodels:/app/MLmodels   # même casse que le dossier du projet
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - STREAMLIT_SERVER_PORT=8501
+      - STREAMLIT_SERVER_ADDRESS=0.0.0.0
+      - FASTAPI_HOST=0.0.0.0
+      - FASTAPI_PORT=8000
+      - MAPBOX_API_KEY=${MAPBOX_API_KEY}
