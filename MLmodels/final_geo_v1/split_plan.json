@@ -1,0 +1,109 @@
+{
+  "data_sha256": "e99209359b823f107ae2023a3ab300b6f052cfd71cb484ebbf84415e6d3b8be7",
+  "metadata_sha256": "41d1fc1594774100f537da3568c8dd5b22e939dcfff15011e7425e7eb24c5b75",
+  "train_end_exclusive": "2024-01-01",
+  "validation_end_exclusive": "2025-01-01",
+  "date_used": "date_reception_dpe",
+  "date_rule": "date_etablissement_dpe <= date_reception_dpe ; date non future",
+  "rows": 616057,
+  "counts": {
+    "train": 398445,
+    "reserved": 107666,
+    "validation": 55235,
+    "excluded": 54711
+  },
+  "excluded_invalid_dates": 79,
+  "excluded_no_address_or_building_group": 2597,
+  "excluded_crossing_groups": 52035,
+  "grouping": "Composantes connexes BAN + immeuble associé + DPE remplacé ; groupes traversant les périodes exclus",
+  "comparison_train_rows": 60000,
+  "comparison_validation_rows": 55235,
+  "train_cap": 60000,
+  "seed": 42,
+  "fit_count": 3,
+  "trees_per_fit": 100,
+  "n_jobs": 2,
+  "candidates": [
+    {
+      "name": "rf_depth10_balanced",
+      "max_depth": 10,
+      "min_samples_split": 20,
+      "min_samples_leaf": 1,
+      "class_weight": "balanced"
+    },
+    {
+      "name": "rf_depth20_balanced",
+      "max_depth": 20,
+      "min_samples_split": 20,
+      "min_samples_leaf": 1,
+      "class_weight": "balanced"
+    },
+    {
+      "name": "rf_depth20_unweighted",
+      "max_depth": 20,
+      "min_samples_split": 20,
+      "min_samples_leaf": 1,
+      "class_weight": null
+    }
+  ],
+  "selection_metric": "F1 macro sur validation, classes A à G fixées",
+  "tie_rule": "En cas d'égalité à 0.001 près, retenir le premier candidat dans l'ordre déclaré",
+  "reserved_policy": "Aucune métrique ni sélection sur le lot réservé. Il reste interne à des données historiquement exploitées, pas externe.",
+  "limitations": [
+    "Filtres IQR et regroupement des énergies déjà calculés avant cette séparation",
+    "BAN est un identifiant d'adresse, pas une garantie d'identité physique du bâtiment",
+    "Groupes construits parmi les lignes nettoyées, liens transitifs via des lignes éliminées non garantis",
+    "Échantillonnage des bruts non aléatoire et changement de proportion neuf/existant à contrôler"
+  ],
+  "partitions": {
+    "train": {
+      "rows": 398445,
+      "groups": 242567,
+      "reception_min": "2021-07-01 00:00:00+00:00",
+      "reception_max": "2023-12-31 00:00:00+00:00",
+      "sources": {
+        "existant": 243410,
+        "neuf": 155035
+      },
+      "classes": {
+        "A": 75108,
+        "B": 37459,
+        "C": 116835,
+        "D": 81069,
+        "E": 52418,
+        "F": 21764,
+        "G": 13792
+      }
+    },
+    "validation": {
+      "rows": 55235,
+      "groups": 23940,
+      "reception_min": "2024-01-01 00:00:00+00:00",
+      "reception_max": "2024-12-31 00:00:00+00:00",
+      "sources": {
+        "neuf": 50648,
+        "existant": 4587
+      },
+      "classes": {
+        "A": 26067,
+        "B": 9491,
+        "C": 17081,
+        "D": 1643,
+        "E": 728,
+        "F": 172,
+        "G": 53
+      }
+    },
+    "reserved": {
+      "rows": 107666,
+      "groups": 54855,
+      "reception_min": "2025-01-01 00:00:00+00:00",
+      "reception_max": "2026-10-19 00:00:00+00:00",
+      "sources": {
+        "existant": 57331,
+        "neuf": 50335
+      }
+    }
+  },
+  "assignments_sha256": "e77e13d499d5015ff6de428dbe8d4d328f90443a3a8fdc7e50d39902f00183fe"
+}

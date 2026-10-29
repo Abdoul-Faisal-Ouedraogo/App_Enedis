@@ -1,0 +1,361 @@
+{
+  "origin": "Échantillon entraînement + validation, jamais le lot réservé",
+  "features": [
+    {
+      "surface_habitable_logement": 48.5,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 78.0,
+      "altitude_moyenne": 2019.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 97.0,
+      "nombre_niveau_logement": 2.0,
+      "age_batiment": 48.0,
+      "altitude_moyenne": 165.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 82.8,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 84.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 85.6,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 62.0,
+      "type_energie_principale_chauffage": "Gaz naturel",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 62.5,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 20.0,
+      "altitude_moyenne": 180.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 118.1,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 112.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 68.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 78.0,
+      "altitude_moyenne": 360.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 127.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 79.0,
+      "altitude_moyenne": 129.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H3"
+    },
+    {
+      "surface_habitable_logement": 97.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 77.0,
+      "altitude_moyenne": 264.0,
+      "type_energie_principale_chauffage": "Autre",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 65.7,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 358.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 122.2,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 317.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 118.1,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 101.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 19.2,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 79.0,
+      "altitude_moyenne": 103.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 18.9,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 313.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 90.8,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 16.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 80.8,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 164.0,
+      "type_energie_principale_chauffage": "Gaz naturel",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 66.8,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 131.0,
+      "type_energie_principale_chauffage": "Gaz naturel",
+      "type_batiment": "appartement",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 146.4,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 108.0,
+      "type_energie_principale_chauffage": "Gaz naturel",
+      "type_batiment": "maison",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 121.8,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 154.0,
+      "type_energie_principale_chauffage": "Gaz naturel",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 41.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 37.0,
+      "altitude_moyenne": 514.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 100.3,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 243.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 42.6,
+      "nombre_niveau_logement": 4.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 4.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H3"
+    },
+    {
+      "surface_habitable_logement": 68.4,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 406.0,
+      "type_energie_principale_chauffage": "Gaz naturel",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 65.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 78.0,
+      "altitude_moyenne": 208.0,
+      "type_energie_principale_chauffage": "Autre",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 70.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 52.0,
+      "altitude_moyenne": 164.0,
+      "type_energie_principale_chauffage": "Gaz naturel",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 49.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 78.0,
+      "altitude_moyenne": 54.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H3"
+    },
+    {
+      "surface_habitable_logement": 92.7,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 50.0,
+      "altitude_moyenne": 750.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 113.0,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 260.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "maison",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 41.8,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 51.0,
+      "altitude_moyenne": 54.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H3"
+    },
+    {
+      "surface_habitable_logement": 28.5,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 78.0,
+      "altitude_moyenne": 145.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H2"
+    },
+    {
+      "surface_habitable_logement": 31.3,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 78.0,
+      "altitude_moyenne": 190.0,
+      "type_energie_principale_chauffage": "Électricité",
+      "type_batiment": "appartement",
+      "zone_climatique": "H1"
+    },
+    {
+      "surface_habitable_logement": 67.9,
+      "nombre_niveau_logement": 1.0,
+      "age_batiment": 0.0,
+      "altitude_moyenne": 560.0,
+      "type_energie_principale_chauffage": "Autre",
+      "type_batiment": "maison",
+      "zone_climatique": "H2"
+    }
+  ],
+  "classification": [
+    "G",
+    "E",
+    "A",
+    "B",
+    "D",
+    "A",
+    "E",
+    "D",
+    "F",
+    "A",
+    "A",
+    "A",
+    "G",
+    "B",
+    "A",
+    "C",
+    "B",
+    "B",
+    "B",
+    "D",
+    "A",
+    "A",
+    "C",
+    "G",
+    "F",
+    "F",
+    "E",
+    "A",
+    "D",
+    "G",
+    "G",
+    "B"
+  ],
+  "regression": [
+    8726.924494438554,
+    10550.049541402323,
+    2616.060694239563,
+    5031.24341175236,
+    5894.952888803512,
+    2318.9698162929412,
+    13506.291043996976,
+    16248.150062806237,
+    25847.53291233655,
+    2391.6304505562207,
+    3008.6774378628547,
+    2642.5985373934354,
+    3236.8971518984717,
+    1095.111385428719,
+    2044.5804544492037,
+    5007.159247366133,
+    3388.1992556862474,
+    6003.124207860793,
+    6941.115700589188,
+    5257.670269292194,
+    2623.6733356900904,
+    1108.250122514321,
+    4207.51838151539,
+    19979.767327822483,
+    19485.657962540605,
+    8940.277051925083,
+    12747.869724282153,
+    2623.6733356900904,
+    5512.178434977711,
+    4485.449778505325,
+    5688.874630673249,
+    3998.3758531396115
+  ]
+}

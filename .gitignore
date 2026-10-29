@@ -1,5 +1,7 @@
 .env-enedis/
 .venv/
+.venv-app/
+.venv-ml/
 venv/
 
 __pycache__/

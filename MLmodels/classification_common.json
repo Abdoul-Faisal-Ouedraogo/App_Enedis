@@ -1,0 +1,107 @@
+{
+  "source": "output/cleaned_data.csv",
+  "data_sha256": "4ac7b5d2b0a4f3ba7ff936d28c348512fcbf368391d8008dded0240a7b1ffc24",
+  "rows": 616057,
+  "train_rows": 431239,
+  "test_rows": 184818,
+  "random_state": 42,
+  "test_size": 0.3,
+  "stratified": true,
+  "quantitative_features": [
+    "surface_habitable_logement",
+    "nombre_niveau_logement",
+    "age_batiment",
+    "altitude_moyenne"
+  ],
+  "qualitative_features": [
+    "type_energie_principale_chauffage",
+    "type_batiment",
+    "zone_climatique"
+  ],
+  "target": "etiquette_dpe",
+  "python": "3.13.18",
+  "sklearn": "1.7.2",
+  "pandas": "2.3.3",
+  "accuracy": 0.5795809931933037,
+  "f1_macro": 0.4759462742330875,
+  "report": {
+    "A": {
+      "precision": 0.9088019291899594,
+      "recall": 0.8848263644319225,
+      "f1-score": 0.8966539052192157,
+      "support": 46851.0
+    },
+    "B": {
+      "precision": 0.485190958690569,
+      "recall": 0.6102342907558083,
+      "f1-score": 0.5405757457340107,
+      "support": 20402.0
+    },
+    "C": {
+      "precision": 0.835325244047076,
+      "recall": 0.48718539933665594,
+      "f1-score": 0.6154328732747805,
+      "support": 56381.0
+    },
+    "D": {
+      "precision": 0.4332951575485273,
+      "recall": 0.47401053713698277,
+      "f1-score": 0.45273929519338457,
+      "support": 31128.0
+    },
+    "E": {
+      "precision": 0.31157591056617384,
+      "recall": 0.3277338246450634,
+      "f1-score": 0.3194506800475373,
+      "support": 18454.0
+    },
+    "F": {
+      "precision": 0.18072395009664383,
+      "recall": 0.2847058823529412,
+      "f1-score": 0.22109958617724512,
+      "support": 7225.0
+    },
+    "G": {
+      "precision": 0.18237005185278868,
+      "recall": 0.6588987891249715,
+      "f1-score": 0.28567183398543905,
+      "support": 4377.0
+    },
+    "accuracy": 0.5795809931933037,
+    "macro avg": {
+      "precision": 0.4767547431416769,
+      "recall": 0.5325135839691922,
+      "f1-score": 0.4759462742330875,
+      "support": 184818.0
+    },
+    "weighted avg": {
+      "precision": 0.6542383073210867,
+      "recall": 0.5795809931933037,
+      "f1-score": 0.5982778791235591,
+      "support": 184818.0
+    }
+  },
+  "parameters": {
+    "bootstrap": true,
+    "ccp_alpha": 0.0,
+    "class_weight": "balanced",
+    "criterion": "gini",
+    "max_depth": 10,
+    "max_features": "sqrt",
+    "max_leaf_nodes": null,
+    "max_samples": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 1,
+    "min_samples_split": 20,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "n_estimators": 100,
+    "n_jobs": 2,
+    "oob_score": false,
+    "random_state": 42,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "note": "Réglages fixés avant évaluation, sans recherche sur le test. Coût et consommation exclus des entrées.",
+  "model_sha256": "4325eef309b58a08b3dad9335ac3bdc91a789e2f2ee3c43680291268a6b9df33"
+}
