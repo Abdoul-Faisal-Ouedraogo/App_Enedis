@@ -1,0 +1,31 @@
+{
+  "id": "initial_geo_v1_iqr_v1",
+  "mode": "frozen_initial_iqr",
+  "reference_year": 2026,
+  "reference_data_sha256": "e99209359b823f107ae2023a3ab300b6f052cfd71cb484ebbf84415e6d3b8be7",
+  "raw_sources_sha256": {
+    "ademe_data_old.csv": "140cfff2b11693334359d54c5e076c02d91e643cd94d22078dfb728feaac529b",
+    "ademe_data_new.csv": "926cef99ff7cb7f862491296cd566ae586126ff17f72322624614546a1ca9bbc"
+  },
+  "notebook_sha256": "389b428b5b90d4cddb7e83cfb0ef7fb874854c39cda42aaf5085619c01f0a71b",
+  "derivation": "Ordre du notebook 1 : année non manquante, âge >= 0, coût non manquant, IQR coût, puis IQR surface. Quantiles linéaires pandas, facteur 1.5, bornes inclusives.",
+  "bounds": {
+    "cout_total_5_usages": {
+      "q1": 455.2,
+      "q3": 1481.0,
+      "lower": -1083.4999999999998,
+      "upper": 3019.7,
+      "reference_rows_before": 738365,
+      "reference_rows_after": 691130
+    },
+    "surface_habitable_logement": {
+      "q1": 49.0,
+      "q3": 95.0,
+      "lower": -20.0,
+      "upper": 164.0,
+      "reference_rows_before": 691130,
+      "reference_rows_after": 668369
+    }
+  },
+  "verified_initial_rows": 616057
+}

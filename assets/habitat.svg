@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="240" viewBox="0 0 1200 240" role="img" aria-label="Illustration du parcours des données ADEME vers une étude des logements et de leur énergie">
+<rect width="1200" height="240" rx="24" fill="#e5f0e9"/>
+<circle cx="1090" cy="54" r="31" fill="#e9cf42"/>
+<path d="M0 205 Q180 110 360 200 T750 180 T1200 175 V240 H0Z" fill="#c5dccd"/>
+<g fill="#fff" stroke="#236b69" stroke-width="5"><path d="M65 122L145 57L225 122V208H65Z"/><path d="M255 75H350V208H255Z"/><path d="M385 132L445 80L505 132V208H385Z"/></g>
+<g fill="#78b8ad"><path d="M125 150H165V208H125Z"/><path d="M278 100H300V124H278ZM314 100H336V124H314ZM278 145H300V169H278ZM314 145H336V169H314Z"/><path d="M424 146H466V182H424Z"/></g>
+<g font-family="Segoe UI, sans-serif" fill="#143c43"><text x="570" y="78" font-size="29" font-weight="bold">L’habitat au fil des données</text><text x="570" y="120" font-size="19">ADEME → Géographie → Exploration → Estimation</text><text x="570" y="161" font-size="16">Comprendre un échantillon, garder ses limites en vue.</text></g>
+<g transform="translate(575 187)"><rect width="62" height="13" rx="4" fill="#16845b"/><rect x="67" width="62" height="13" rx="4" fill="#57a653"/><rect x="134" width="62" height="13" rx="4" fill="#a5bf48"/><rect x="201" width="62" height="13" rx="4" fill="#e9cf42"/><rect x="268" width="62" height="13" rx="4" fill="#eaa23e"/><rect x="335" width="62" height="13" rx="4" fill="#dd6c3f"/><rect x="402" width="62" height="13" rx="4" fill="#bb4148"/></g>
+</svg>

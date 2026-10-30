@@ -32,6 +32,72 @@ class Ademe_API_requester(BaseAPIRequester):
         """
         self.__size: int = size
 
+    def bounded_lines_by_date(self, department, start, end, limit=500, neuf=False,
+                              progress=None, session=None, sleep=None):
+        """Collecte explicite bornée ; échec complet si pagination ou transport incohérent."""
+        import datetime
+        import re
+        import time
+        from urllib.parse import urlparse, urljoin
+        if not re.fullmatch(r"(?:\d{2,3}|2A|2B)", department):
+            raise ValueError("Département invalide")
+        first, last = datetime.date.fromisoformat(str(start)), datetime.date.fromisoformat(str(end))
+        if first > last or not 1 <= limit <= 5000:
+            raise ValueError("Période ou volume invalide (1 à 5 000)")
+        client, pause = session or requests.Session(), sleep or time.sleep
+        base = self.__base_url_neuf if neuf else self.__base_url_existant
+        url = base + "/lines"
+        params = {"size": min(self.__size, limit, 500), "sort": "date_reception_dpe,numero_dpe",
+                  "qs": f'code_departement_ban:"{department}" AND date_reception_dpe:[{first} TO {last}]'}
+        rows, visited = [], set()
+        while url and len(rows) < limit:
+            if not isinstance(url,str):
+                raise ValueError("Lien de pagination invalide")
+            url = urljoin(base + "/lines",url)
+            parsed = urlparse(url)
+            if parsed.scheme != "https" or parsed.netloc != "data.ademe.fr" or parsed.path != urlparse(base + "/lines").path:
+                raise ValueError("Lien de pagination ADEME non autorisé")
+            if url in visited:
+                raise ValueError("Boucle de pagination ADEME")
+            visited.add(url)
+            payload = None
+            for attempt in range(3):
+                try:
+                    response = client.get(url, params=params, timeout=(5, 30), allow_redirects=False)
+                    if response.status_code == 429 or response.status_code >= 500:
+                        raise requests.RequestException("Service temporairement indisponible")
+                    if 300 <= response.status_code < 400:
+                        raise ValueError("API déplacée : vérifier le contrat ADEME avant de collecter")
+                    response.raise_for_status()
+                    payload = response.json()
+                    break
+                except requests.RequestException as exc:
+                    if attempt == 2:
+                        raise ValueError("Échec ADEME après trois tentatives ; aucune version activée") from exc
+                    pause(2 ** attempt)
+            if not isinstance(payload, dict) or not isinstance(payload.get("results"), list):
+                raise ValueError("Réponse ADEME invalide")
+            page = payload["results"][:limit - len(rows)]
+            if not page and payload.get("next"):
+                raise ValueError("Pagination vide incohérente")
+            for row in page:
+                if not isinstance(row, dict):
+                    raise ValueError("Ligne ADEME invalide")
+                try:
+                    date = datetime.date.fromisoformat(str(row["date_reception_dpe"])[:10])
+                    dep = str(row["code_departement_ban"]).zfill(2)
+                    if not first <= date <= last or dep != department:
+                        raise ValueError("Le serveur n'a pas respecté les filtres")
+                except (KeyError, TypeError) as exc:
+                    raise ValueError("Schéma ADEME incompatible") from exc
+            rows.extend(page)
+            if progress:
+                progress(len(rows), limit)
+            url, params = payload.get("next"), None
+            if url and len(rows) < limit:
+                pause(.25)
+        return rows
+
     def __get_length(self, url: str, params: dict[str, Any] | None = None) -> int:
         """Private method to get the total number of results from the API for monitoring progress.
 

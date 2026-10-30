@@ -1,0 +1,69 @@
+{
+  "frozen_at_utc": "2026-10-29T18:06:50.777769+00:00",
+  "selection": "rf_depth10_balanced",
+  "selection_basis": "F1 macro validation uniquement, trois candidats, tolérance 0.001",
+  "comparison_sha256": "84ad14cea33fdd69b0634f80ddc9446bd620b6c03db6207543df12e1f049fd70",
+  "data_sha256": "e99209359b823f107ae2023a3ab300b6f052cfd71cb484ebbf84415e6d3b8be7",
+  "metadata_sha256": "41d1fc1594774100f537da3568c8dd5b22e939dcfff15011e7425e7eb24c5b75",
+  "assignments_sha256": "e77e13d499d5015ff6de428dbe8d4d328f90443a3a8fdc7e50d39902f00183fe",
+  "fit_partitions": [
+    "train",
+    "validation"
+  ],
+  "fit_rows": 453680,
+  "reserved_rows": 107666,
+  "classification_parameters": {
+    "max_depth": 10,
+    "min_samples_split": 20,
+    "min_samples_leaf": 1,
+    "class_weight": "balanced",
+    "n_estimators": 100,
+    "random_state": 42,
+    "n_jobs": 2
+  },
+  "regression_parameters": {
+    "n_estimators": 100,
+    "max_depth": 10,
+    "min_samples_split": 20,
+    "min_samples_leaf": 1,
+    "random_state": 42,
+    "n_jobs": 2
+  },
+  "regression_selection": "Réglages précédemment retenus, figés sans nouvelle recherche ni score réservé",
+  "refit_after_reserved": false,
+  "resources": {
+    "forest_n_jobs": 2,
+    "native_threads": 2
+  },
+  "internal_reserved_warning": "Lot interne à des données déjà exploitées, pas une évaluation externe indépendante",
+  "limitations": [
+    "Filtres IQR et regroupement des énergies déjà calculés avant cette séparation",
+    "BAN est un identifiant d'adresse, pas une garantie d'identité physique du bâtiment",
+    "Groupes construits parmi les lignes nettoyées, liens transitifs via des lignes éliminées non garantis",
+    "Échantillonnage des bruts non aléatoire et changement de proportion neuf/existant à contrôler",
+    "Validation à 91.7 % de neuf, classes F/G peu nombreuses",
+    "Année de construction des logements neufs imputée à 2026, donc âge zéro dans la préparation"
+  ],
+  "versions": {
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.7.2",
+    "joblib": "1.5.2",
+    "threadpoolctl": "3.6.0"
+  },
+  "python": "3.13.18 (main, Oct 26 2026, 14:10:48) [MSC v.1944 64 bit (AMD64)]",
+  "old_model_hashes": {
+    "features_target_columns_classification_dpe.pkl": "765a6f6a970c88a88b3f2788fa488cb85433431d906e43989388d4d5d0a615c3",
+    "features_target_columns_consommation.pkl": "4c68cb43b19c5cb88eb38792126802dfe9225b533ba218e27330903b4c63ed2d",
+    "pipeline_classification_common.pkl": "4325eef309b58a08b3dad9335ac3bdc91a789e2f2ee3c43680291268a6b9df33",
+    "pipeline_random_forest_classification_dpe.pkl": "c63b3a54cb15a07c1550ad68bc9819ae62486fc8168316e2c65338107eec11f9",
+    "pipeline_random_forest_consommation.pkl": "755e275152a7052dbad06b83bacc7efc0d7595a833fb73ed6242e685ddcff2ca"
+  },
+  "implementation_sha256": {
+    "scripts\\train_final_models.py": "17b0827003301447400be898e8943cbb59edfa02fd844416e2e9d7b5abc8418c",
+    "src\\final_models.py": "bf2358d0b281c9a037988887228d5a00f86c49dc869eb291a3a21d5d650e2d00",
+    "src\\validation_plan.py": "3fdf38a72cfebb7d589645cb8d75750ba328d84017dc5c295af3479f30941450",
+    "scripts\\compare_classification.py": "f21407b36bf51168a3b2abd6f2900d85b725faf06da7c288c263b45fb88e09ff"
+  }
+}

@@ -1,2 +1,9 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.pkl binary
+*.joblib binary
+
+# Les empreintes SHA-256 des manifestes ML (results.json, frozen_protocol.json) ont été
+# calculées sur des fichiers CRLF : les extraire ainsi sur tous les systèmes.
+MLmodels/*.json text eol=crlf
+MLmodels/**/*.json text eol=crlf

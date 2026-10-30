@@ -1,0 +1,53 @@
+{
+  "quantitative_features": [
+    "surface_habitable_logement",
+    "nombre_niveau_logement",
+    "age_batiment",
+    "altitude_moyenne"
+  ],
+  "qualitative_features": [
+    "type_energie_principale_chauffage",
+    "type_batiment",
+    "zone_climatique"
+  ],
+  "features": [
+    "surface_habitable_logement",
+    "nombre_niveau_logement",
+    "age_batiment",
+    "altitude_moyenne",
+    "type_energie_principale_chauffage",
+    "type_batiment",
+    "zone_climatique"
+  ],
+  "target": "conso_5_usages_ef",
+  "unit": "kWh/an, énergie finale cinq usages",
+  "reference_year": 2026,
+  "climate_zones": [
+    "H1",
+    "H2",
+    "H3"
+  ],
+  "data_sha256": "e99209359b823f107ae2023a3ab300b6f052cfd71cb484ebbf84415e6d3b8be7",
+  "fit_rows": 453680,
+  "model_parameters": {
+    "bootstrap": true,
+    "ccp_alpha": 0.0,
+    "criterion": "squared_error",
+    "max_depth": 10,
+    "max_features": 1.0,
+    "max_leaf_nodes": null,
+    "max_samples": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 1,
+    "min_samples_split": 20,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "n_estimators": 100,
+    "n_jobs": 2,
+    "oob_score": false,
+    "random_state": 42,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "model_sha256": "ad2b865215af5a94510f3e541709399c648cfc13d49a037fc5b995bf305d71e8"
+}

@@ -1,0 +1,6 @@
+{
+  "data_path": "output/backups/cleaned_data_4ac7b5d2b0a4f3ba.csv",
+  "data_sha256": "4ac7b5d2b0a4f3ba7ff936d28c348512fcbf368391d8008dded0240a7b1ffc24",
+  "note": "Données antérieures aux corrections géographiques ; anciens scores uniquement.",
+  "regression_model_sha256": "755e275152a7052dbad06b83bacc7efc0d7595a833fb73ed6242e685ddcff2ca"
+}

@@ -1,0 +1,2 @@
+# Alias conservé pour les anciennes instructions ; dépendances issues de uv.lock.
+-r requirements.txt
