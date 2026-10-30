@@ -10,6 +10,9 @@ from src.final_model_loader import load_final_bundle
 from src.app_design import context, styles, scale, NAV_LABELS
 from src.app_prediction_ui import render_prediction
 from src.app_map import camera_for_selection, MAP_HEIGHT
+from src.version_store import VersionStore
+from src.expert_ui import render_management
+from src.model_registry import load_model_version
 from src.app_services import (LABELS, read_data, filter_data, csv_bytes, chart_pngs,
                               map_points, build_map)
 
@@ -19,15 +22,17 @@ def number(value, decimals=0):
 
 
 @st.cache_data(show_spinner="Lecture des données locales…", max_entries=2)
-def cached_data(path, stamp):
+def cached_data(path, stamp, expected=None):
+    if expected:
+        from src.preparation_geography import sha256
+        if sha256(path) != expected:
+            raise ValueError("Données actives altérées")
     return read_data(path)
 
 
 @st.cache_resource(show_spinner="Contrôle et chargement des deux modèles finaux…", max_entries=1)
-def cached_bundle(stamps):
-    models = load_final_bundle()
-    models["version"] = json.loads((project_paths.ROOT / "MLmodels/final_models.json").read_text(encoding="utf-8"))["version"]
-    return models
+def cached_bundle(stamps, version="final_geo_v1"):
+    return load_model_version(version)
 
 
 @st.cache_data(show_spinner="Préparation des graphiques…", max_entries=8)
@@ -48,9 +53,12 @@ def bundle():
 
 
 def load_frame():
-    path = project_paths.DATA_PATH
     try:
-        frame = cached_data(str(path), (path.stat().st_mtime_ns, path.stat().st_size))
+        store = VersionStore()
+        version = store.active()["data"]
+        path = project_paths.DATA_PATH if version == "initial" else store.data_paths(version, check=False)[0]
+        expected = None if version == "initial" else store.manifest("datasets", version)["hashes"]["data.csv"]
+        frame = cached_data(str(path), (path.stat().st_mtime_ns, path.stat().st_size), expected)
         if frame.empty:
             st.warning("Le fichier local est vide. Fournissez le CSV préparé par le groupe.")
         return frame
@@ -199,12 +207,24 @@ def run():
     styles()
     st.sidebar.title("🏡 Habitat & énergie")
     st.sidebar.caption("DPE · étude locale ADEME")
-    page = st.sidebar.radio("Navigation", ["Contexte", "Exploration", "Carte", "Prédiction"], key="page", format_func=NAV_LABELS.get)
+    try:
+        revision = VersionStore().active()["revision"]
+        if st.session_state.get("active_revision", revision) != revision:
+            for key in list(st.session_state):
+                if key.endswith("_result") or key.endswith("_dirty") or key == "map_camera" or key.startswith("filter_"):
+                    del st.session_state[key]
+        st.session_state.active_revision = revision
+    except (OSError, ValueError, KeyError):
+        st.error("Le registre actif est illisible. Restaurer le registre local avant de continuer.")
+        return
+    page = st.sidebar.radio("Navigation", list(NAV_LABELS), key="page", format_func=NAV_LABELS.get)
     df = load_frame()
     if page == "Contexte":
         context(df)
     elif page == "Prédiction":
         prediction(df)
+    elif page == "Gestion des données et modèles":
+        render_management()
     elif df is not None and not df.empty:
         {"Exploration": exploration, "Carte": carte}[page](df)
     st.sidebar.divider()

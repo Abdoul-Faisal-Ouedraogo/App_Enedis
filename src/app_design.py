@@ -6,6 +6,7 @@ from src import project_paths
 from src.app_services import LABELS, DPE_COLORS
 
 NAV_LABELS = {"Contexte": "🏡 Accueil", "Exploration": "📊 Exploration", "Carte": "🗺️ Carte", "Prédiction": "✨ Prédiction"}
+NAV_LABELS["Gestion des données et modèles"] = "⚙️ Gestion"
 
 
 def number(value, decimals=0):
