@@ -71,6 +71,39 @@ uv pip install --python .venv-app/Scripts/python.exe -r requirements-app-test.tx
 
 Voir [le compte rendu de vérification](doc/application_streamlit_locale.md).
 
+### Refonte de l'interface, comparaison et PDF
+
+La branche `feat/20-refonte-interface` ([Issue #20](https://github.com/Abdoul-Faisal-Ouedraogo/App_Enedis/issues/20))
+reprend les quatre pages avec un accueil plus court, des accès directs,
+des filtres actifs visibles, une légende DPE et un cadrage automatique de carte.
+Les détails techniques et crédits sont dans des sections dépliables.
+
+La page Prédiction propose un logement ou deux profils indépendants. Les
+saisies sont réactives : une modification retire immédiatement le résultat
+correspondant, son PDF et, si nécessaire, l'écart comparatif jusqu'au recalcul.
+L'écart est exprimé en kWh/an (B moins A) ; ce n'est pas une preuve de l'effet
+d'une rénovation. La lettre reste produite par le classificateur distinct.
+
+Chaque estimation peut être téléchargée en PDF ; la comparaison exporte les
+deux logements. Le résumé contient les sept caractéristiques, les résultats,
+les unités, la date du calcul en Europe/Paris, la version des modèles et les
+limites essentielles. ReportLab est la seule dépendance application ajoutée ;
+pypdf sert uniquement aux tests.
+
+L'aide géographique se choisit dans chaque profil : sélectionner un département
+puis une commune, consulter la proposition et cliquer **Utiliser ces valeurs**.
+L'altitude et la zone restent modifiables. Le référentiel local requis est
+`data/communes-france-2025.csv` ; les règles H1/H2/H3 sont lues comme listes
+littérales du notebook 1, sans exécution. Le remplacement départemental utilise
+la moyenne des communes du référentiel, jamais celle des logements. Les
+corrections de jointure Lyon/Pierre-Bénite sont conservées. Une référence ou
+une zone indisponible est signalée et n'empêche pas une saisie manuelle.
+Les codes 2A/2B ne sont pas convertis arbitrairement en 20 pour déduire une zone.
+
+Voir [le bilan de la refonte et ses contrôles](doc/refonte_interface_locale.md).
+Ce bilan distingue les validations manuelles réalisées des contrôles restant à
+faire, notamment **le petit écran et la page Exploration après refonte**.
+
 ## Installation des notebooks — Windows, Python 3.13
 
 Depuis la racine du dépôt, sans modifier les environnements existants :

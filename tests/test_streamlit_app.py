@@ -42,7 +42,7 @@ def test_four_pages_real_data():
     for page in ["Exploration", "Carte", "Prédiction"]:
         ui.sidebar.radio[0].set_value(page).run()
         assert not ui.exception
-        assert not ui.error if page != "Prédiction" else len(ui.error) == 1  # Avertissement F/G attendu.
+        assert not ui.error
         if page == "Exploration":
             assert len(ui.get("download_button")) == 4
         elif page == "Carte":

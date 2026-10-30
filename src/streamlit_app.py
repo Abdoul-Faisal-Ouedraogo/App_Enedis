@@ -1,14 +1,17 @@
 """Interface française des niveaux Standard et Intermédiaire."""
 import logging
-from pathlib import Path
+import json
 
 import pandas as pd
 import streamlit as st
 
 from src import project_paths
 from src.final_model_loader import load_final_bundle
+from src.app_design import context, styles, scale, NAV_LABELS
+from src.app_prediction_ui import render_prediction
+from src.app_map import camera_for_selection, MAP_HEIGHT
 from src.app_services import (LABELS, read_data, filter_data, csv_bytes, chart_pngs,
-                              map_points, build_map, category_options, predict)
+                              map_points, build_map)
 
 
 def number(value, decimals=0):
@@ -22,7 +25,9 @@ def cached_data(path, stamp):
 
 @st.cache_resource(show_spinner="Contrôle et chargement des deux modèles finaux…", max_entries=1)
 def cached_bundle(stamps):
-    return load_final_bundle()
+    models = load_final_bundle()
+    models["version"] = json.loads((project_paths.ROOT / "MLmodels/final_models.json").read_text(encoding="utf-8"))["version"]
+    return models
 
 
 @st.cache_data(show_spinner="Préparation des graphiques…", max_entries=8)
@@ -51,49 +56,9 @@ def load_frame():
         return frame
     except (OSError, ValueError, pd.errors.ParserError) as exc:
         logging.getLogger(__name__).warning("Lecture impossible : %s", exc)
-        st.error("Données locales absentes ou illisibles : output/cleaned_data.csv. "
-                 "Récupérez le fichier préparé auprès du groupe. Aucun téléchargement automatique.")
+        st.error("Données locales absentes ou illisibles. "
+                 "Récupérez le jeu préparé auprès du groupe. Aucun téléchargement automatique.")
         return None
-
-
-def context(df):
-    st.title("🏡 Comprendre l’habitat et son énergie")
-    st.write("Explorer les diagnostics de performance énergétique et estimer, à partir de sept "
-             "caractéristiques, une consommation annuelle et une classe DPE.")
-    st.image(str(project_paths.ROOT / "assets/habitat.svg"), width="stretch")
-    left, right = st.columns(2)
-    with left:
-        st.subheader("📚 Des données publiques à l’étude locale")
-        st.markdown("Les extractions **ADEME DPE logements existants et neufs** sont préparées dans le "
-                    "notebook 1. Les identifiants géographiques BAN permettent de rapprocher les communes "
-                    "du référentiel communes-france-2025 : altitude et zones climatiques **H1, H2, H3**.")
-        st.markdown("[Catalogue des données ADEME](https://data.ademe.fr/) · "
-                    "[Base Adresse Nationale](https://adresse.data.gouv.fr/)")
-        st.write("Les corrections de jointure Lyon/Pierre-Bénite sont intégrées. L’altitude manquante "
-                 "est complétée par la moyenne départementale. Les sous-zones climatiques ne sont pas déduites.")
-    with right:
-        st.subheader("🔎 Ce que mesure l’application")
-        st.write("Consommation finale totale des cinq usages en kWh/an : chauffage, eau chaude, "
-                 "refroidissement, éclairage et auxiliaires. Ce n’est ni une consommation par m² "
-                 "ni une facture ni une consommation d’énergie primaire.")
-        st.info("Application pédagogique locale. Une estimation statistique ne remplace pas un DPE réglementaire.")
-    st.subheader("📦 Données réellement chargées")
-    if df is not None:
-        a, b, c = st.columns(3)
-        a.metric("Logements chargés", number(len(df)))
-        b.metric("Départements renseignés", df.code_departement_ban.nunique() if "code_departement_ban" in df else "—")
-        c.metric("Colonnes disponibles", len(df.columns))
-        st.caption("Fichier lu : output/cleaned_data.csv. Aucun appel API ni entraînement au démarrage.")
-        details = pd.DataFrame({"Colonne": df.columns, "Description": [LABELS.get(c, c) for c in df],
-                                "Valeurs absentes": df.isna().sum().values})
-        with st.expander("Consulter les colonnes et les valeurs manquantes"):
-            st.dataframe(details, hide_index=True, width="stretch")
-    st.warning("Cet échantillon ne représente pas le parc français : les extractions historiques étaient "
-               "plafonnées à 5 000 lignes par département et par source, sans échantillonnage temporel représentatif. "
-               "Les filtres de nettoyage et la part du neuf influencent les distributions.")
-    st.write("L’âge utilise une référence fixe **2026**. Les logements neufs ont reçu un âge nul par imputation. "
-             "Les coordonnées BAN ne garantissent pas l’identité d’un bâtiment ; plusieurs logements peuvent se superposer. "
-             "Le travail Rhône de Nouhayla est conservé séparément et son enrichissement complet n’est pas rejoué ici.")
 
 
 def reset_filters():
@@ -133,6 +98,15 @@ def filters(df):
             include = st.sidebar.checkbox("Inclure les surfaces non renseignées", value=True, key="filter_missing")
     result = filter_data(df, selections, surface, include)
     st.sidebar.caption(f"{number(len(result))} / {number(len(df))} logements retenus")
+    active = [LABELS[col] + " : " + ", ".join(values) for col, values in selections.items() if values]
+    if surface and (surface[0] > low or surface[1] < high):
+        active.append(f"Surface : {number(surface[0], 1)} à {number(surface[1], 1)} m²")
+    if not include:
+        active.append("Surfaces non renseignées exclues")
+    with st.container(border=True):
+        st.markdown("**Filtres actifs**")
+        st.write(" · ".join(active) if active else "Tous les logements · aucun filtre restrictif")
+        st.button("Effacer les filtres actifs", on_click=reset_filters)
     return result
 
 
@@ -183,6 +157,7 @@ def carte(df):
     st.title("🗺️ Situer les logements")
     subset = filters(df)
     if subset.empty:
+        st.session_state.pop("map_camera", None)
         st.info("Aucun logement ne correspond à ces filtres. Élargissez-les pour afficher la carte.")
         return
     limit = st.select_slider("Nombre maximal de marqueurs", options=[1000, 2500, 5000, 10000], value=5000)
@@ -197,105 +172,34 @@ def carte(df):
                "Contrôle : valeurs finies, latitude de 41 à 51,5°, longitude de −5,5 à 10° (métropole et Corse). "
                "Les points géographiquement plausibles ne sont pas certifiés à l’adresse.")
     if points.empty:
+        st.session_state.pop("map_camera", None)
         st.warning("Aucune coordonnée admissible. Les colonnes lat/lon doivent être présentes et renseignées.")
         return
     st.info(f"{number(len(points))} logements représentés sur {number(valid)} géolocalisables : "
             + ("échantillon aléatoire déterministe (graine 42), sans pondération." if len(points) < valid else "affichage complet de la sélection géolocalisable."))
-    st.pydeck_chart(build_map(points, basemap), height=570, width="stretch")
+    scale()
+    view, map_key = camera_for_selection(subset)
+    st.pydeck_chart(build_map(points, basemap, view=view), height=MAP_HEIGHT, width="stretch",
+                    key=map_key, on_select="rerun")
     st.caption("Survolez un marqueur pour lire ses informations. Déplacez et zoomez avec la souris. "
                "Couleurs : A vert → G rouge ; inconnu gris. Plusieurs logements à une adresse peuvent se superposer.")
 
 
 def prediction(df):
-    st.title("✨ Estimer un logement")
-    st.write("Deux modèles finaux, sept caractéristiques communes. Les résultats sont des estimations pédagogiques.")
     try:
         models = bundle()
     except Exception:
         logging.getLogger(__name__).exception("Échec du chargement des modèles finaux")
-        st.error("Les modèles finaux sont absents, incompatibles ou leur contrôle d’intégrité a échoué. "
-                 "Vérifiez MLmodels/final_geo_v1/, le manifeste et requirements-app.txt. Aucun ancien modèle n’est utilisé.")
+        st.error("Les modèles finaux sont indisponibles ou leur contrôle a échoué. Contactez le groupe pour restaurer les artefacts locaux compatibles.")
         return
-    contract = models["variables"]["classification"]
-    year = contract["reference_year"]
-    options = category_options(models)
-    st.info(f"Âge = {year} − année de construction, indépendamment de l’année actuelle. "
-            "Pour le neuf, la préparation du modèle a imputé l’âge à 0. Zones H1 (froide), H2 (tempérée), "
-            "H3 (méditerranéenne) : reprendre la zone du référentiel départemental du projet, sans sous-zone.")
-    with st.form("logement"):
-        left, right = st.columns(2)
-        with left:
-            surface = st.number_input("Surface habitable (m²)", min_value=0.1, max_value=10000.0, value=80.0, step=1.0)
-            levels = st.number_input("Nombre de niveaux du logement", min_value=1, max_value=100, value=1, step=1)
-            age = st.number_input(f"Âge du bâtiment en {year} (années)", min_value=0, max_value=1000, value=30, step=1)
-            altitude = st.number_input("Altitude moyenne de la commune (m)", min_value=-500.0, max_value=5000.0, value=150.0, step=10.0)
-        values = dict(zip(contract["quantitative_features"], [surface, levels, age, altitude]))
-        with right:
-            for col in contract["qualitative_features"]:
-                values[col] = st.selectbox(LABELS[col], options[col])
-            st.caption("Catégories reprises de l’encodeur final : « Autre » regroupe les énergies selon la préparation commune.")
-        submitted = st.form_submit_button("Calculer les estimations", type="primary")
-    st.caption("Bornes de saisie : garde-fous physiques larges, pas une garantie de validité du modèle. "
-               "L’altitude est communale ; le nombre de niveaux concerne le logement.")
-    if submitted:
-        try:
-            if df is not None:
-                outside = [LABELS[col] for col in contract["quantitative_features"] if col in df
-                           and df[col].notna().any() and not df[col].min() <= values[col] <= df[col].max()]
-                if outside:
-                    st.warning("Valeur hors du domaine observé dans le CSV : " + ", ".join(outside) + ". Estimation extrapolée, particulièrement incertaine.")
-            consumption, label = predict(models, values)
-            a, b = st.columns(2)
-            a.metric("Consommation finale estimée · cinq usages", number(consumption) + " kWh/an")
-            b.metric("Lettre DPE estimée", label)
-            st.caption("La lettre est produite par le classificateur ; elle n’est pas déduite de la consommation estimée.")
-        except (ValueError, TypeError, KeyError):
-            st.error("Saisie invalide ou incompatible avec le contrat des modèles. Vérifiez les sept caractéristiques.")
-    results = models["results"]
-    st.subheader("Résultats réels des modèles finaux")
-    st.caption(f"Lot réservé interne : {number(results['classification']['rows'])} logements, réceptions depuis 2025. "
-               "Choix des modèles figé avant son évaluation ; ce lot n’est pas une validation externe indépendante.")
-    a, b, c = st.columns(3)
-    a.metric("DPE correctement classés", number(results["classification"]["accuracy"] * 100, 2) + " %")
-    b.metric("F1 macro A–G", number(results["classification"]["f1_macro"], 4))
-    c.metric("Erreur absolue moyenne", number(results["regression"]["mae"], 2) + " kWh/an")
-    st.warning("La MAE est une moyenne des erreurs sur un groupe. Elle ne constitue pas un intervalle de confiance "
-               "pour ce logement. Le modèle ne fournit pas d’intervalle individuel calibré.")
-    rows = []
-    for source, scores in results["by_source"].items():
-        rows.append({"Population": source, "Effectif": scores["classification"]["rows"],
-                     "Accuracy DPE": scores["classification"]["accuracy"],
-                     "F1 macro": scores["classification"]["f1_macro"],
-                     "MAE (kWh/an)": scores["regression"]["mae"],
-                     "RMSE (kWh/an)": scores["regression"]["rmse"], "R²": scores["regression"]["r2"]})
-    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
-    st.write("Sur les logements existants, l’accuracy tombe à environ 38,70 % et la MAE atteint 2 802 kWh/an. "
-             "L’ancien est moins bien couvert que le neuf ; le mélange des populations masque cet écart.")
-    with st.expander("Détail des classes A à G et erreurs de consommation"):
-        class_report = pd.DataFrame({k: results["classification"]["report"][k] for k in "ABCDEFG"}).T
-        class_report = class_report.rename(columns={"precision": "Précision", "recall": "Rappel", "f1-score": "F1", "support": "Effectif"})
-        st.dataframe(class_report, width="stretch")
-        st.dataframe(pd.DataFrame(results["regression_by_dpe"]).T.rename(columns={
-            "rows": "Effectif", "mae": "MAE (kWh/an)", "rmse": "RMSE (kWh/an)", "r2": "R²"}), width="stretch")
-    st.error("F/G : fiabilité faible. Précision d’environ 8,77 % pour F et 5,82 % pour G, donc nombreuses "
-             "fausses alertes. MAE de consommation : environ 4 265 kWh/an pour F et 6 668 kWh/an pour G. "
-             "Le lot G ne compte que 467 logements. Ne prenez pas de décision de rénovation sur cette seule estimation.")
-    st.caption("Forêts aléatoires finales, entraînement + validation : 453 680 lignes. Séparation temporelle avec groupes "
-               "communs exclus ; distributions différentes entre périodes. Nettoyage IQR et regroupements d’énergies "
-               "effectués globalement avant séparation : toute la chaîne de préparation n’est pas validée sans fuite. "
-               "Voir doc/modeles_finaux_2026-10-29.md pour le protocole et toutes les limites.")
+    render_prediction(models, df)
 
 
 def run():
-    st.markdown("""<style>
-        .stApp {background-color:#f8faf9;} h1,h2,h3 {color:#143c43;}
-        [data-testid="stSidebar"] {background:#edf3f0;}
-        [data-testid="stMetric"] {background:white;padding:14px;border-radius:12px;border:1px solid #dde8e2;}
-        .block-container {padding-top:2rem;max-width:1450px;}
-        </style>""", unsafe_allow_html=True)
+    styles()
     st.sidebar.title("🏡 Habitat & énergie")
     st.sidebar.caption("DPE · étude locale ADEME")
-    page = st.sidebar.radio("Navigation", ["Contexte", "Exploration", "Carte", "Prédiction"], key="page")
+    page = st.sidebar.radio("Navigation", ["Contexte", "Exploration", "Carte", "Prédiction"], key="page", format_func=NAV_LABELS.get)
     df = load_frame()
     if page == "Contexte":
         context(df)

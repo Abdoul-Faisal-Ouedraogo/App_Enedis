@@ -13,6 +13,8 @@ LABELS = {
     "conso_5_usages_ef": "Consommation finale (kWh/an)", "nom_commune_ban": "Commune",
     "nombre_niveau_logement": "Nombre de niveaux", "age_batiment": "Âge en 2026 (années)",
     "altitude_moyenne": "Altitude communale (m)", "zone_climatique": "Zone climatique",
+    "cout_total_5_usages": "Coût des cinq usages (€)", "code_insee_ban": "Code INSEE",
+    "code_postal_ban": "Code postal", "lat": "Latitude (°)", "lon": "Longitude (°)",
 }
 DPE_COLORS = ["#16845b", "#57a653", "#a5bf48", "#e9cf42", "#eaa23e", "#dd6c3f", "#bb4148"]
 
@@ -46,9 +48,10 @@ def chart_pngs(df, measure, percent=False):
     """Agrégats exacts ; seul le nuage est limité à 5 000 lignes filtrées."""
     charts = {}
     def save(name, title, draw):
-        fig = Figure(figsize=(8, 4.5), layout="constrained", facecolor="#ffffff")
+        fig = Figure(figsize=(9, 5.4), layout="constrained", facecolor="#ffffff")
         ax = fig.subplots()
-        ax.set_title(title, loc="left", fontsize=13, pad=16, color="#143c43")
+        ax.set_title(title, loc="left", fontsize=14, pad=18, color="#123e35", wrap=True)
+        ax.tick_params(labelsize=12)
         draw(ax)
         ax.spines[["top", "right"]].set_visible(False)
         ax.grid(axis="y", alpha=.15)
@@ -112,7 +115,28 @@ def map_points(df, limit=5000):
     return points[keep], int(valid.sum())
 
 
-def build_map(points, basemap=False):
+def map_view(frame, width=1000, height=700, padding=.08):
+    """Cadrer toutes les coordonnées admissibles de la sélection, avant échantillonnage."""
+    lat, lon = pd.to_numeric(frame.lat, errors="coerce"), pd.to_numeric(frame.lon, errors="coerce")
+    valid = np.isfinite(lat) & np.isfinite(lon) & lat.between(41, 51.5) & lon.between(-5.5, 10)
+    lat, lon = lat[valid], lon[valid]
+    if not len(lat):
+        raise ValueError("Aucune coordonnée pour cadrer la carte")
+    if not np.isfinite([width, height, padding]).all() or width <= 0 or height <= 0 or not 0 <= padding < .5:
+        raise ValueError("Dimensions ou marge de carte invalides")
+    # Coordonnées en degrés Mercator : à zoom 0, le monde mesure 512 pixels.
+    south, north = np.degrees(np.arcsinh(np.tan(np.radians([lat.min(), lat.max()]))))
+    span_x = max(float(lon.max() - lon.min()), 1e-9)
+    span_y = max(float(north - south), 1e-9)
+    usable_width, usable_height = width * (1 - 2 * padding), height * (1 - 2 * padding)
+    zoom_x = np.log2(usable_width * 360 / (512 * span_x))
+    zoom_y = np.log2(usable_height * 360 / (512 * span_y))
+    zoom = float(min(zoom_x, zoom_y, 14))
+    center_lat = float(np.degrees(np.arctan(np.sinh(np.radians((south + north) / 2)))))
+    return pdk.ViewState(latitude=center_lat, longitude=float((lon.min() + lon.max()) / 2), zoom=zoom, pitch=0)
+
+
+def build_map(points, basemap=False, framing=None, view=None):
     layer = pdk.Layer("ScatterplotLayer", id="logements", data=points, get_position="[lon, lat]", get_fill_color="color",
                       get_radius=90, radius_min_pixels=4, radius_max_pixels=12, pickable=True, auto_highlight=True)
     # Ne pas passer map_style=None : PyDeck omet alors mapStyle du JSON et Streamlit
@@ -120,8 +144,7 @@ def build_map(points, basemap=False):
     # __MAP_STYLE__, reconnue par Streamlit 1.66.1 comme une désactivation explicite.
     style = {"map_style": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"} if basemap else {}
     return pdk.Deck(layers=[layer], map_provider="carto" if basemap else None, **style,
-                    initial_view_state=pdk.ViewState(latitude=float(points.lat.median()),
-                                                     longitude=float(points.lon.median()), zoom=5, pitch=0),
+                    initial_view_state=view if view is not None else map_view(points if framing is None else framing),
                     tooltip={"text": "{nom_commune_ban} · DPE {etiquette_dpe}\n"
                              "{type_batiment} · {surface_habitable_logement} m²\n"
                              "Chauffage : {type_energie_principale_chauffage}\n"
