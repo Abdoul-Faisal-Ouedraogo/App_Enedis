@@ -45,7 +45,11 @@ puis `docker compose -f compose.yaml -f compose.test.yaml down`. Elle lie unique
 Ne pas utiliser `down -v` pour un arrêt normal : conserver le volume des versions.
 Le protocole d'apprentissage garde les réceptions depuis 2025 réservées au test :
 une collecte récente n'est pas automatiquement utilisée pour apprendre. Le
-nettoyage incrémental réutilise l'IQR par lot ; sa comparabilité reste une limite.
+nettoyage incrémental utilise désormais les bornes IQR initiales figées, et non
+des quantiles recalculés par petit lot. L'[audit du lot Rhône](doc/audit_rejets_rhone.md)
+explique les 15 rejets (14 années absentes, une surface absente avec niveaux absents),
+la provenance des seuils et les limites qui subsistent. Les bilans affichent cinq
+indicateurs, des motifs sans double comptage et un JSON technique dépliable.
 
 Rendu éditable : [guide utilisateur](doc/guide_utilisateur.md),
 [documentation technique](doc/documentation_technique.md),

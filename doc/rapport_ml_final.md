@@ -201,8 +201,10 @@ l'évaluation réservée de la référence.
 La collecte Expert est volontaire et bornée par département, réception et volume.
 Elle prépare une copie avec bilan des rejets, doublons et remplacements. L'activation
 nécessite validation explicite. L'aide géographique utilise les communes, pas une
-moyenne des seuls logements. Le nettoyage incrémental réutilise les IQR par lot :
-les seuils historiques n'étant pas figés, la comparabilité doit être surveillée.
+moyenne des seuls logements. Le nettoyage incrémental utilise maintenant un profil
+IQR figé à partir des sources initiales et sauvegarde les motifs de rejet. Cette
+stabilité ne corrige pas la limite du nettoyage global avant séparation. L'audit
+du lot réel Rhône attribue ses 15 rejets à des champs manquants, sans rejet IQR.
 
 Le réentraînement reprend les coupures 2024/2025, les groupes et les réglages finaux
 figés. Les réceptions récentes depuis 2025 restent donc réservées, non apprises.

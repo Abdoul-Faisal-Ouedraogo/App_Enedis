@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -r requirements-app.txt \
 COPY home.py ./
 COPY src/ ./src/
 COPY assets/ ./assets/
+COPY config/preparation_initial_geo_v1.json ./config/preparation_initial_geo_v1.json
 COPY .streamlit/ ./.streamlit/
 COPY MLmodels/final_models.json ./MLmodels/final_models.json
 COPY MLmodels/final_geo_v1/ ./MLmodels/final_geo_v1/

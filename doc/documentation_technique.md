@@ -56,7 +56,10 @@ pages de 500, trois tentatives, timeout connexion/lecture 5/30 s, pauses et cont
 du domaine des liens suivants. Les filtres sont revérifiés dans les réponses.
 La préparation réutilise les méthodes IQR coût/surface et le regroupement des
 énergies du projet, avec jointure communale corrigée et repli départemental.
-Les IQR sont calculés par lot, sans seuils historiques figés : limite documentée.
+Les bornes IQR sont figées à partir des sources initiales : coût jusqu'à 3 019,70,
+surface jusqu'à 164 m². Le profil versionné et les motifs de rejet sont consignés ;
+aucun quantile n'est recalculé sur les petits lots. Les audits des anciens bilans
+restent en lecture seule, selon leurs règles d'origine.
 Les doublons de numéro sont éliminés ; seuls les remplaçants admis retirent un ancien
 diagnostic de la nouvelle copie. Les lots portent une provenance distincte.
 

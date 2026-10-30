@@ -129,6 +129,15 @@ def test_tampered_data_cannot_validate(tiny_store):
         store.validate_data(info["id"])
 
 
+def test_zero_kept_has_detailed_summary_without_creating_version(tiny_store):
+    from src.expert_data import PreparationRejected
+    store,ref=tiny_store
+    with pytest.raises(PreparationRejected) as error:
+        prepare_version([raw_row("invalid",annee_construction=None)],"existant",store,ref)
+    assert error.value.summary["audit"]["primary_counts"]=={"construction_missing":1}
+    assert not store.list_versions("datasets") and store.active()["data"]=="initial"
+
+
 def test_path_and_concurrency_protection(tmp_path):
     store = VersionStore(tmp_path)
     with pytest.raises(ValueError):

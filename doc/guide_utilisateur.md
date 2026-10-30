@@ -54,8 +54,10 @@ exporte deux pages, une par logement.
 
 1. Choisir source ADEME, département, période de réception et volume (maximum
 5 000). Cocher la confirmation et lancer la collecte. Aucun appel n'est automatique.
-2. Lire le bilan : reçues, conservées, rejets, doublons et diagnostics remplacés.
-La copie reste préparée, non active. Les originaux et la réponse reçue sont conservés.
+2. Lire les cinq compteurs : reçus, conservés, doublons, remplacés et rejetés,
+puis les raisons précises. Le JSON technique est dépliable. Les bornes sont fixées
+sur la référence initiale, jamais recalculées sur un petit lot. La copie reste
+préparée, non active ; les originaux et la réponse reçue sont conservés.
 3. Examiner les limites, cocher l'accord et valider la version. Une seconde
 confirmation permet de l'activer. Il est possible de garder les données initiales.
 4. Pour entraîner, choisir des données validées et confirmer explicitement. Deux

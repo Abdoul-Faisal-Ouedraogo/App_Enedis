@@ -10,7 +10,7 @@ import hashlib,json
 from pathlib import Path
 root=Path('/app')
 paths=list((root/'src').rglob('*.py'))+list((root/'assets').rglob('*'))+list((root/'MLmodels/final_geo_v1').glob('*'))
-paths += [root/name for name in ['home.py','requirements-app.txt','.streamlit/config.toml','MLmodels/final_models.json','Notebooks_Api_Traitement/1_data_preparation.ipynb','scripts/smoke_container.py']]
+paths += [root/name for name in ['home.py','requirements-app.txt','.streamlit/config.toml','config/preparation_initial_geo_v1.json','MLmodels/final_models.json','Notebooks_Api_Traitement/1_data_preparation.ipynb','scripts/smoke_container.py']]
 print(json.dumps({p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in paths if p.is_file()}))
 """
 

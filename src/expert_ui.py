@@ -1,11 +1,48 @@
 """Actions Expert uniquement sur clic et confirmation explicites."""
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
+import pandas as pd
 import streamlit as st
 
 from src.data_requesters.ademe import Ademe_API_requester
-from src.expert_data import prepare_version
+from src.expert_data import prepare_version, PreparationRejected, audit_existing_version
+from src.preparation_audit import DUPLICATE_CODES
+from src.project_paths import ROOT
 from src.version_store import VersionStore
+
+
+@st.cache_data(show_spinner="Analyse du bilan historique…",max_entries=8)
+def historical_summary(version,runtime,stamps):
+    return audit_existing_version(version,VersionStore(runtime))
+
+
+def data_summary(info):
+    duplicates=int(info.get("duplicates",0))
+    rejected=int(info["rejected"])-duplicates
+    for col,label,value in zip(st.columns(5),["Reçus","Conservés","Doublons","Remplacés","Rejetés"],
+                               [info["received"],info["kept_new"],duplicates,info.get("replaced_base",0),rejected]):
+        col.metric(label,f"{value:,}".replace(","," "))
+    st.caption("Reçus = conservés + doublons + rejetés. Les doublons ne sont pas recomptés dans les rejets. "
+               "Remplacés : anciens diagnostics écartés de cette copie, sans supprimer les originaux.")
+    audit=info.get("audit")
+    if audit:
+        reasons=[{"Type":"Doublon" if code in DUPLICATE_CODES else "Rejet","Raison":audit["labels"][code],"Effectif":count}
+                 for code,count in audit["primary_counts"].items() if count]
+        if reasons:
+            st.markdown("**Pourquoi certaines lignes ne sont pas conservées ?**")
+            st.dataframe(pd.DataFrame(reasons),hide_index=True,width="stretch")
+            st.caption("Un motif principal par ligne, selon l’ordre des contrôles. D’autres champs peuvent aussi manquer sur la même ligne ; les détails techniques donnent les motifs cumulés, non additionnables.")
+        else:
+            st.success("Toutes les lignes reçues ont été conservées.")
+    else:
+        st.warning("Ce bilan ancien ne contient pas de motifs détaillés reproductibles. Aucun motif n’est inventé.")
+    if info.get("audit_read_only"):
+        st.info("Bilan historique analysé en lecture seule : la copie préparée n’a pas été modifiée ni activée.")
+    if "stable_comparison" in info:
+        alternative=info["stable_comparison"]
+        st.caption(f"Avec les bornes initiales figées, ce lot aurait {alternative['kept_new']} lignes conservées et {alternative['rejected']} non conservées. Cette comparaison ne crée ni n’active de version.")
+    with st.expander("Détails techniques du bilan (JSON)",expanded=False):
+        st.json(info)
 
 
 def render_management():
@@ -29,16 +66,28 @@ def render_management():
                     neuf=source == "neuf", progress=lambda done,total: progress.progress(min(done/total,1.0), text=f"{done} / {total} lignes reçues"))
                 info = prepare_version(raw, source, store)
                 st.session_state.last_prepared = info["id"]
+                st.session_state.review_data_version=info["id"]
                 st.success("Nouvelle version préparée, non activée.")
-                st.json(info)
+            except PreparationRejected as exc:
+                st.warning("Aucune version créée : toutes les lignes sont des doublons ou des rejets.")
+                data_summary(exc.summary)
             except Exception as exc:
                 st.error(f"Actualisation interrompue : {exc}. Les versions actives sont conservées.")
     with st.expander("Valider et activer des données", expanded=True):
         entries = store.list_versions("datasets")
         if entries:
-            version = st.selectbox("Version de données à examiner", [x["id"] for x in entries])
+            version = st.selectbox("Version de données à examiner", [x["id"] for x in entries],key="review_data_version")
             info = store.manifest("datasets", version)
-            st.json(info)
+            if "audit" not in info:
+                try:
+                    paths=[store.folder("datasets",version)/name for name in ["manifest.json","data.csv","metadata.csv","received.json"]]
+                    paths+=list(store.data_paths(info["base"],check=False))
+                    paths+=[ROOT/"data/communes-france-2025.csv",ROOT/"config/preparation_initial_geo_v1.json"]
+                    stamps=tuple((str(p),p.stat().st_mtime_ns,p.stat().st_size) for p in paths)
+                    info=historical_summary(version,str(store.root),stamps)
+                except (OSError,ValueError,KeyError) as exc:
+                    st.warning(f"Audit historique indisponible : {exc}")
+            data_summary(info)
             confirm = st.checkbox("J’ai vérifié le bilan, les rejets et les limites de cette version.")
             if st.button("Valider cette version de données", disabled=not confirm, key="validate_data"):
                 try:
@@ -75,7 +124,8 @@ def render_management():
             try:
                 result = train_version(training_data,store,progress=lambda value,text:progress.progress(value,text=text))
                 st.success("Nouvelle version prête, non activée.")
-                st.json(result)
+                with st.expander("Détails techniques de l’entraînement (JSON)",expanded=False):
+                    st.json(result)
             except Exception as exc:
                 st.error(f"Entraînement échoué : {exc}. Consulter le journal de version ; les modèles actifs sont conservés.")
     with st.expander("Choisir les modèles actifs", expanded=True):

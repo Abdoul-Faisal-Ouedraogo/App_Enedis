@@ -234,4 +234,4 @@ def run():
     elif df is not None and not df.empty:
         {"Exploration": exploration, "Carte": carte}[page](df)
     st.sidebar.divider()
-    st.sidebar.caption("Local uniquement · sans extraction ni réentraînement")
+    st.sidebar.caption("Local uniquement · collecte et entraînement sur confirmation")
