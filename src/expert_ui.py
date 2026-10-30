@@ -62,3 +62,31 @@ def render_management():
             st.rerun()
         except Exception as exc:
             st.error(str(exc))
+    with st.expander("Entraîner deux nouveaux modèles", expanded=False):
+        st.write("Deux forêts, deux threads. Réglages finaux conservés, sans recherche sur le test. Réceptions avant 2024 : entraînement ; 2024 : validation ; depuis 2025 : réservé. Les nouveautés récentes ne sont donc pas apprises avec ce protocole fixe.")
+        st.caption("Le calcul peut être long sur toute la base. Aucun modèle actif n’est remplacé automatiquement.")
+        choices = ["initial"] + [x["id"] for x in store.list_versions("datasets") if x["status"]=="validated"]
+        training_data = st.selectbox("Version validée pour l’entraînement",choices)
+        approved_training = st.checkbox("Je confirme l’entraînement explicite des deux modèles sur cette version.")
+        if st.button("Entraîner une nouvelle version",disabled=not approved_training,key="train_models"):
+            from src.expert_training import train_version
+            progress = st.progress(0,text="Préparation de l’entraînement…")
+            try:
+                result = train_version(training_data,store,progress=lambda value,text:progress.progress(value,text=text))
+                st.success("Nouvelle version prête, non activée.")
+                st.json(result)
+            except Exception as exc:
+                st.error(f"Entraînement échoué : {exc}. Consulter le journal de version ; les modèles actifs sont conservés.")
+    with st.expander("Choisir les modèles actifs", expanded=True):
+        entries = store.list_versions("models")
+        for item in entries:
+            st.caption(f"{item['id']} · {item['status']}" + (" · " + item.get("error","") if item["status"]=="failed" else ""))
+        choices = ["final_geo_v1"] + [x["id"] for x in entries if x["status"]=="ready"]
+        selected_model = st.selectbox("Version de modèles compatible à activer",choices)
+        confirm_model = st.checkbox("Je confirme le changement des modèles actifs et l’invalidation des anciens résultats.")
+        if st.button("Activer les modèles choisis",disabled=not confirm_model,key="activate_models"):
+            try:
+                store.activate(model=selected_model)
+                st.rerun()
+            except Exception as exc:
+                st.error(f"Activation refusée : {exc}")

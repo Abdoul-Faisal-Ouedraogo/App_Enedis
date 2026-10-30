@@ -152,9 +152,12 @@ def model_details(models):
         report = pd.DataFrame({k: results["classification"]["report"][k] for k in "ABCDEFG"}).T
         st.dataframe(report.rename(columns={"precision":"Précision", "recall":"Rappel", "f1-score":"F1", "support":"Logements"}), width="stretch")
         st.dataframe(pd.DataFrame(results["regression_by_dpe"]).T.rename(columns={"rows":"Logements", "mae":"Erreur absolue moyenne (kWh/an)", "rmse":"Erreur quadratique (kWh/an)", "r2":"R²"}), width="stretch")
-        st.write("Sur l’existant : environ 38,70 % de DPE corrects et 2 802 kWh/an d’erreur absolue moyenne. "
-                 "Précision F : 8,77 %, G : 5,82 % ; nombreuses fausses alertes. Erreurs moyennes F/G : "
-                 "4 265 et 6 668 kWh/an. Seulement 467 logements G dans le lot réservé.")
+        if "existant" in results["by_source"]:
+            existing = results["by_source"]["existant"]
+            st.write(f"Sur l’existant : {number(existing['classification']['accuracy']*100,2)} % de DPE corrects ; erreur absolue moyenne {number(existing['regression']['mae'])} kWh/an.")
+        for label in "FG":
+            entry = results["classification"]["report"][label]
+            st.write(f"Classe {label} : précision {number(entry['precision']*100,2)} %, {number(entry['support'])} logements réservés. Interprétation prudente, notamment en cas de faible effectif.")
         st.write("Référence d’âge : 2026, avec âge nul imputé au neuf. Séparation temporelle avec groupes communs exclus ; "
                  "distributions différentes entre périodes. Nettoyage IQR et regroupements d’énergies effectués globalement : "
                  "la chaîne complète n’est pas validée sans fuite. Évaluation externe encore nécessaire.")

@@ -47,9 +47,15 @@ def cached_csv(data):
 
 def bundle():
     root = project_paths.ROOT
+    store = VersionStore()
+    version = store.active()["model"]
+    if version != "final_geo_v1":
+        folder = store.folder("models",version)
+        stamps = tuple((str(p),p.stat().st_mtime_ns,p.stat().st_size) for p in sorted(folder.glob("*")) if p.is_file())
+        return cached_bundle(stamps,version)
     paths = [root / "MLmodels/final_models.json", *sorted((root / "MLmodels/final_geo_v1").glob("*"))]
     stamps = tuple((str(p), p.stat().st_mtime_ns, p.stat().st_size) for p in paths if p.is_file())
-    return cached_bundle(stamps)
+    return cached_bundle(stamps,version)
 
 
 def load_frame():
