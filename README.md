@@ -3,6 +3,29 @@
 Projet de groupe sur les données DPE ADEME : nettoyage, enrichissement,
 modèles finaux et application Streamlit locale (Standard et Intermédiaire).
 
+## Lancer le projet
+
+Python 3.13 est requis. S'il n'est pas installé : le télécharger sur
+[python.org](https://www.python.org/downloads/) ou lancer `uv python install 3.13`.
+
+```powershell
+git clone https://github.com/Abdoul-Faisal-Ouedraogo/App_Enedis.git
+cd App_Enedis
+git checkout fix/26-bilan-preparation-stable
+py -3.13 -m venv .venv-app
+.\.venv-app\Scripts\Activate.ps1
+pip install -r requirements-app.txt
+python scripts/download_data.py
+streamlit run home.py
+```
+
+Sous Linux ou macOS, remplacer la création et l'activation de l'environnement par
+`python3.13 -m venv .venv-app` puis `source .venv-app/bin/activate`.
+`scripts/download_data.py` télécharge depuis la release `data-v1` les deux CSV
+ignorés par Git (`data/communes-france-2025.csv` et `output/cleaned_data.csv`),
+vérifie leur SHA-256 et ne retélécharge pas un fichier déjà correct. L'application
+s'ouvre sur http://127.0.0.1:8501.
+
 ## Niveau Expert et rendu final local
 
 La page **Gestion des données et modèles** ajoute une collecte ADEME volontaire

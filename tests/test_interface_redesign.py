@@ -45,7 +45,12 @@ def test_changed_inputs_remove_result_and_pdf_until_recalculation():
     ui.number_input(key="single_surface").set_value(80.0).run()
     assert len(ui.get("download_button")) == 0
     ui.button(key="single_calculate").click().run()
-    assert ui.session_state["single_result"]["consumption"] == first["consumption"]
+    # La réduction parallèle des arbres peut varier de quelques ULP selon
+    # l'ordre des additions. 1e-12 relatif (~1e-8 kWh/an ici) reste très
+    # inférieur à la précision affichée et ne tolère pas une dérive métier.
+    assert ui.session_state["single_result"]["consumption"] == pytest.approx(
+        first["consumption"], rel=1e-12, abs=1e-9
+    )
     assert len(ui.get("download_button")) == 1
 
 

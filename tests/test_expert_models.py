@@ -13,6 +13,13 @@ from src.model_registry import load_model_version
 from src.preparation_geography import sha256
 from src.app_services import predict
 
+# activate() contrôle les entrées initiales, dont les métadonnées de traçabilité
+# (non distribuées avec les données publiques).
+needs_initial_metadata = pytest.mark.skipif(
+    not (ROOT / "output/cleaned_data_metadata.csv").is_file(),
+    reason="output/cleaned_data_metadata.csv absent",
+)
+
 
 @pytest.fixture
 def training_store(tmp_path):
@@ -48,6 +55,7 @@ def test_temporal_groups_crossing_are_excluded(training_store):
     assert not (groups[0]&groups[1] or groups[0]&groups[2] or groups[1]&groups[2])
 
 
+@needs_initial_metadata
 def test_small_training_freezes_parameters_and_does_not_activate(training_store,monkeypatch):
     store,data,_ = training_store
     monkeypatch.setattr("src.expert_training.TREES",2)
@@ -70,6 +78,7 @@ def test_small_training_freezes_parameters_and_does_not_activate(training_store,
     assert store.active()["model"]=="final_geo_v1"
 
 
+@needs_initial_metadata
 def test_training_failure_is_recorded_and_active_models_preserved(training_store,monkeypatch):
     store,_,_ = training_store
     monkeypatch.setattr("src.expert_training.TREES",2)
@@ -93,6 +102,7 @@ def test_unvalidated_data_cannot_train(training_store):
         train_version("tiny",store)
 
 
+@needs_initial_metadata
 def test_model_change_invalidates_ui_result_and_reload_cache(training_store,monkeypatch):
     from fastapi.testclient import TestClient
     from src.prediction_api import app
@@ -116,6 +126,7 @@ def test_model_change_invalidates_ui_result_and_reload_cache(training_store,monk
     assert not ui.get("download_button")
 
 
+@needs_initial_metadata
 def test_tampered_model_refused(training_store,monkeypatch):
     store,_,_=training_store
     monkeypatch.setattr("src.expert_training.TREES",2)
