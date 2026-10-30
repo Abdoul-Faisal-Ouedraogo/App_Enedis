@@ -1,0 +1,37 @@
+name: habitat-energie-local
+x-runtime: &runtime
+  image: habitat-energie:local
+  build: .
+  init: true
+  read_only: true
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,size=256m
+  security_opt:
+    - no-new-privileges:true
+  cap_drop: [ALL]
+  cpus: 2
+  environment:
+    ENEDIS_RUNTIME: /app/runtime
+  volumes:
+    - type: bind
+      source: ./output/cleaned_data.csv
+      target: /app/output/cleaned_data.csv
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: ./output/cleaned_data_metadata.csv
+      target: /app/output/cleaned_data_metadata.csv
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: ./data/communes-france-2025.csv
+      target: /app/data/communes-france-2025.csv
+      read_only: true
+      bind: {create_host_path: false}
+    - expert-runtime:/app/runtime
+services:
+  application:
+    <<: *runtime
+    ports: ["127.0.0.1:8501:8501"]
+volumes:
+  expert-runtime:
