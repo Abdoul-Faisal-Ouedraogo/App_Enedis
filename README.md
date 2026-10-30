@@ -21,10 +21,10 @@ streamlit run home.py
 
 Sous Linux ou macOS, remplacer la création et l'activation de l'environnement par
 `python3.13 -m venv .venv-app` puis `source .venv-app/bin/activate`.
-`scripts/download_data.py` télécharge depuis la release `data-v1` les deux CSV
-ignorés par Git (`data/communes-france-2025.csv` et `output/cleaned_data.csv`),
-vérifie leur SHA-256 et ne retélécharge pas un fichier déjà correct. L'application
-s'ouvre sur http://127.0.0.1:8501.
+`scripts/download_data.py` télécharge depuis la release `data-v1` les trois CSV
+ignorés par Git (`data/communes-france-2025.csv`, `output/cleaned_data.csv` et
+`output/cleaned_data_metadata.csv`), vérifie leur SHA-256 et ne retélécharge pas
+un fichier déjà correct. L'application s'ouvre sur http://127.0.0.1:8501.
 
 ## Niveau Expert et rendu final local
 
@@ -232,7 +232,8 @@ ML/notebooks ne la lance.
 ## Données locales et ordre des notebooks
 
 Les dossiers data/ et output/ sont ignorés par Git. Un clone seul ne contient
-pas les données : récupérer les fichiers locaux auprès du groupe.
+pas les données : les télécharger avec `python scripts/download_data.py`
+(release `data-v1`). Seuls les CSV bruts ADEME ne sont pas distribués.
 
 1. Notebooks_Api_Traitement/1_data_preparation.ipynb lit
    data/ademe_data_old.csv, data/ademe_data_new.csv et

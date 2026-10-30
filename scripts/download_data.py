@@ -16,6 +16,10 @@ FILES = {
         "cleaned_data.csv",
         "e99209359b823f107ae2023a3ab300b6f052cfd71cb484ebbf84415e6d3b8be7",
     ),
+    "output/cleaned_data_metadata.csv": (
+        "cleaned_data_metadata.csv",
+        "41d1fc1594774100f537da3568c8dd5b22e939dcfff15011e7425e7eb24c5b75",
+    ),
 }
 
 
