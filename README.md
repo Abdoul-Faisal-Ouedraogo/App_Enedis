@@ -1,8 +1,75 @@
 # App_Enedis — préparation et modèles DPE
 
-Projet de groupe sur les données DPE ADEME. Le périmètre courant comprend
-le nettoyage, l'enrichissement et les deux modèles. Le développement de
-l'application attend une autorisation séparée.
+Projet de groupe sur les données DPE ADEME : nettoyage, enrichissement,
+modèles finaux et application Streamlit locale (Standard et Intermédiaire).
+
+## Application locale — Windows, Python 3.13
+
+L'application dispose de quatre pages en français : Contexte, Exploration,
+Carte et Prédiction. Elle utilise uniquement les données et modèles déjà
+présents sur la machine, sans extraction ni entraînement au lancement.
+Son environnement est séparé de `.venv-ml` et de `uv.lock`.
+
+Installation dans un environnement application (à créer seulement s'il n'existe pas) :
+
+~~~powershell
+py -3.13 -m venv .venv-app
+.\.venv-app\Scripts\python.exe -m pip install -r requirements-app.txt
+~~~
+
+Avec `uv` installé, notamment si l'environnement existant n'a pas `pip` :
+
+~~~powershell
+uv pip install --python .venv-app/Scripts/python.exe -r requirements-app.txt
+~~~
+
+Depuis `C:\Users\mouni\Documents\App_Enedis`, lancer :
+
+~~~powershell
+.\.venv-app\Scripts\python.exe -m streamlit run home.py --server.address 127.0.0.1 --server.port 8501 --browser.gatherUsageStats false
+~~~
+
+Ouvrir **http://127.0.0.1:8501** ; arrêter avec `Ctrl+C` dans le terminal.
+La configuration `.streamlit/config.toml` impose également l'écoute locale
+et désactive les statistiques d'utilisation. Aucun déploiement n'est prévu.
+
+Prérequis locaux : `output/cleaned_data.csv`, `MLmodels/final_models.json`
+et les artefacts complets de `MLmodels/final_geo_v1/`. Les données ne sont
+pas fournies par un clone Git : demander les fichiers préparés au groupe.
+Une absence de données est signalée ; la prédiction reste possible si les
+modèles finaux sont disponibles. Aucun modèle historique ne sert de repli.
+
+- Exploration : filtres en cascade (liste vide = tous), plage de surface,
+  valeurs absentes incluses au choix, indicateurs, tableau limité à 500 lignes,
+  quatre graphiques et export de toutes les lignes filtrées en CSV.
+  Cliquer « Préparer l’export CSV filtré », puis télécharger. Le CSV utilise
+  UTF-8 avec BOM, `;` et la virgule décimale pour Excel français.
+- Chaque graphique a son export PNG natif Matplotlib : aucun Chrome,
+  Kaleido, téléchargement de binaire ou service d'export n'est nécessaire.
+  Histogramme et boîtes utilisent toutes les valeurs filtrées ; le nuage
+  représente au plus 5 000 lignes, avec effectif affiché.
+- Carte : marqueurs WebGL avec infobulles ; limite réglable de 1 000 à
+  10 000 logements, tirage fixe et effectifs affichés. Contrôle des valeurs
+  finies et de l'emprise métropolitaine/Corse ; ce contrôle ne certifie pas
+  chaque adresse. Les logements superposés restent distincts dans le compte.
+  Le fond CARTO est facultatif, désactivé par défaut et nécessite Internet ;
+  le canevas de marqueurs fonctionne sans tuiles. WebGL doit être disponible.
+- Prédiction : chargeur existant `load_final_bundle`, cache et empreintes
+  des modèles contrôlées. Catégories issues de l'encodeur final, âge fixé
+  à la référence 2026, H1/H2/H3, unités explicites. Les résultats réels et
+  limites sont présentés, notamment sur l'existant et F/G. La MAE n'est
+  jamais un intervalle de confiance individuel.
+
+Tests (installer les dépendances de test uniquement dans l'environnement application) :
+
+~~~powershell
+uv pip install --python .venv-app/Scripts/python.exe -r requirements-app-test.txt
+.\.venv-app\Scripts\python.exe -m pytest -q
+.\.venv-app\Scripts\python.exe scripts/verify_app.py
+.\.venv-app\Scripts\python.exe scripts/verify_final_models.py
+~~~
+
+Voir [le compte rendu de vérification](doc/application_streamlit_locale.md).
 
 ## Installation des notebooks — Windows, Python 3.13
 
@@ -37,8 +104,8 @@ uv export --locked --no-hashes --no-emit-project --format requirements-txt --out
 
 Les dépendances des anciennes expériences XGBoost restent disponibles dans
 l'option experiments. Elles ne sont pas nécessaires aux notebooks ML courants.
-L'application Streamlit reste hors du périmètre de cette livraison des modèles ;
-aucune de ces commandes ne la lance.
+L'application utilise son environnement séparé ; aucune de ces commandes
+ML/notebooks ne la lance.
 
 ## Données locales et ordre des notebooks
 
