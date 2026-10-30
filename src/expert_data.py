@@ -76,7 +76,7 @@ def prepare_version(raw, source, store=None, reference=None):
         raise ValueError("Base et traçabilité incompatibles")
     incoming = prepare_received(raw, source, reference)
     rejected_preparation = len(raw) - len(incoming)
-    incoming = incoming.sort_values("date_reception_dpe", kind="stable")
+    incoming = incoming.assign(_received_sort=pd.to_datetime(incoming.date_reception_dpe,utc=True)).sort_values("_received_sort", kind="stable")
     duplicates = incoming.numero_dpe.duplicated(keep="last")
     duplicates_count = int(duplicates.sum())
     incoming = incoming.loc[~duplicates].copy()
@@ -99,11 +99,14 @@ def prepare_version(raw, source, store=None, reference=None):
     rejected = rejected_preparation + duplicates_count + replaced_new + stale_count
     if incoming.empty:
         raise ValueError(f"Aucune nouvelle ligne conservée (reçues {len(raw)}, rejetées {rejected})")
+    version = "d-" + uuid.uuid4().hex
+    if "_source_batch" not in metadata:
+        metadata["_source_batch"] = "initial"
+    incoming["_source_batch"] = version
     new_data = incoming.drop(columns=LINEAGE_FIELDS + ["annee_construction", "_geopoint"], errors="ignore").reindex(columns=base.columns)
     data = pd.concat([base.loc[~remove_old], new_data], ignore_index=True)
     meta = pd.concat([metadata.loc[~remove_old], incoming.reindex(columns=metadata.columns)], ignore_index=True)
     meta.insert(0, "cleaned_row", np.arange(len(meta)))
-    version = "d-" + uuid.uuid4().hex
     folder = store.folder("datasets", version)
     folder.mkdir(parents=True)
     data.to_csv(folder / "data.csv", index=False)
@@ -112,6 +115,7 @@ def prepare_version(raw, source, store=None, reference=None):
     info = {"id": version, "status":"prepared", "created_at":now(), "base":base_id, "rows":len(data),
             "received":len(raw), "kept_new":len(incoming), "rejected":rejected,
             "duplicates":duplicates_count, "replaced_base":int(remove_old.sum()), "replaced_in_batch":replaced_new,
+            "rejected_preparation":rejected_preparation,
             "stale_replacements":stale_count, "base_hashes":{"data":sha256(data_path), "metadata":sha256(meta_path)},
             "hashes":{n:sha256(folder/n) for n in ["data.csv", "metadata.csv", "received.json"]},
             "preparation":"Référence 2026 ; méthodes IQR coût/surface du projet appliquées au lot reçu ; énergies regroupées ; altitudes référentiel communal/départemental ; H1/H2/H3 du notebook",

@@ -128,3 +128,22 @@ def test_path_and_concurrency_protection(tmp_path):
         with pytest.raises(ValueError,match="opération"):
             with store.lock():
                 pass
+
+
+def test_management_page_no_automatic_actions_and_explicit_collection(tiny_store):
+    from unittest.mock import patch
+    from streamlit.testing.v1 import AppTest
+    store,_=tiny_store
+    with patch("src.expert_ui.VersionStore",return_value=store), patch.object(Ademe_API_requester,"bounded_lines_by_date",return_value=[raw_row()]) as collect:
+        ui=AppTest.from_file(str(ROOT/"home.py"),default_timeout=90).run()
+        ui.sidebar.radio[0].set_value("Gestion des données et modèles").run()
+        assert not ui.exception and not collect.called
+        assert ui.button(key="collect_data").disabled
+        [w for w in ui.checkbox if w.label.startswith("Je souhaite lancer")][0].check().run()
+        ui.button(key="collect_data").click().run()
+        assert not ui.exception and collect.call_count==1
+        assert store.list_versions("datasets")[0]["status"]=="prepared"
+        assert store.active()["data"]=="initial"
+        [w for w in ui.checkbox if w.label.startswith("J’ai vérifié")][0].check().run()
+        ui.button(key="validate_data").click().run()
+        assert store.list_versions("datasets")[0]["status"]=="validated"

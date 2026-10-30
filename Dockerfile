@@ -16,6 +16,6 @@ COPY MLmodels/final_geo_v1/ ./MLmodels/final_geo_v1/
 COPY Notebooks_Api_Traitement/1_data_preparation.ipynb ./Notebooks_Api_Traitement/1_data_preparation.ipynb
 COPY scripts/smoke_container.py ./scripts/smoke_container.py
 USER app
-EXPOSE 8501
+EXPOSE 8501 8000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=30s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"
 CMD ["python", "-m", "streamlit", "run", "home.py", "--server.address=0.0.0.0", "--server.port=8501", "--browser.gatherUsageStats=false"]

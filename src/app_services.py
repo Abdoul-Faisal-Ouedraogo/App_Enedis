@@ -166,6 +166,10 @@ def predict(bundle, values):
         raise ValueError("La surface doit être positive et le nombre de niveaux au moins égal à 1.")
     if values["nombre_niveau_logement"] != int(values["nombre_niveau_logement"]) or values["age_batiment"] < 0:
         raise ValueError("Le nombre de niveaux doit être entier et l’âge positif ou nul.")
+    if (values["surface_habitable_logement"] > 10000 or values["nombre_niveau_logement"] > 100
+            or values["age_batiment"] > 1000 or values["age_batiment"] != int(values["age_batiment"])
+            or not -500 <= values["altitude_moyenne"] <= 5000):
+        raise ValueError("Valeurs hors des bornes de saisie communes ; âge attendu en années entières référencées à 2026.")
     for col, options in category_options(bundle).items():
         if values[col] not in options:
             raise ValueError(f"{LABELS[col]} : catégorie non reconnue par le modèle.")

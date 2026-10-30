@@ -11,3 +11,5 @@ pydeck==0.9.3
 threadpoolctl==3.7.0
 pillow==13.0.0
 reportlab==5.1.0
+fastapi==0.162.0
+uvicorn==0.54.0

@@ -1,5 +1,6 @@
 """Actions Expert uniquement sur clic et confirmation explicites."""
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 import streamlit as st
 
 from src.data_requesters.ademe import Ademe_API_requester
@@ -18,7 +19,7 @@ def render_management():
         dep = a.text_input("Département à actualiser", value="69", key="collect_department")
         source = b.selectbox("Source ADEME", ["existant", "neuf"])
         start = a.date_input("Réception à partir du", value=date(2025, 1, 1))
-        end = b.date_input("Réception jusqu’au", value=date.today())
+        end = b.date_input("Réception jusqu’au", value=datetime.now(ZoneInfo("Europe/Paris")).date())
         limit = st.number_input("Volume maximal reçu", min_value=1, max_value=5000, value=500, step=100)
         approved = st.checkbox("Je souhaite lancer cette collecte réseau bornée et préparer une copie locale.")
         if st.button("Collecter et préparer une version", disabled=not approved, key="collect_data"):

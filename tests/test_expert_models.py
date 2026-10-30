@@ -94,6 +94,8 @@ def test_unvalidated_data_cannot_train(training_store):
 
 
 def test_model_change_invalidates_ui_result_and_reload_cache(training_store,monkeypatch):
+    from fastapi.testclient import TestClient
+    from src.prediction_api import app
     store,_,_=training_store
     monkeypatch.setattr("src.expert_training.TREES",2)
     new=train_version("tiny",store)["id"]
@@ -103,11 +105,13 @@ def test_model_change_invalidates_ui_result_and_reload_cache(training_store,monk
     ui.button(key="single_calculate").click().run()
     assert ui.session_state["single_result"]["model_version"]=="final_geo_v1"
     store.activate(model=new)
+    assert TestClient(app).get("/health").json()["model_version"]==new
     ui.run()
     assert not ui.exception and not ui.get("download_button")
     ui.button(key="single_calculate").click().run()
     assert ui.session_state["single_result"]["model_version"]==new
     store.rollback()
+    assert TestClient(app).get("/health").json()["model_version"]=="final_geo_v1"
     ui.run()
     assert not ui.get("download_button")
 

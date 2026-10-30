@@ -1,0 +1,9 @@
+{
+  "surface_habitable_logement": 80.0,
+  "nombre_niveau_logement": 1,
+  "age_batiment": 30.0,
+  "altitude_moyenne": 150.0,
+  "type_energie_principale_chauffage": "Électricité",
+  "type_batiment": "maison",
+  "zone_climatique": "H1"
+}
