@@ -3,6 +3,68 @@
 Projet de groupe sur les données DPE ADEME : nettoyage, enrichissement,
 modèles finaux et application Streamlit locale (Standard et Intermédiaire).
 
+## Niveau Expert et rendu final local
+
+La page **Gestion des données et modèles** ajoute une collecte ADEME volontaire
+et bornée, des versions de données à valider puis activer séparément, et le
+réentraînement explicite des deux modèles. Les modèles initiaux `final_geo_v1`
+et CSV d'origine ne sont jamais remplacés. Les nouvelles versions et le pointeur
+actif sont dans `runtime/` (ignoré par Git), ou dans `ENEDIS_RUNTIME` si défini.
+Un retour à la sélection précédente est disponible. Les anciens résultats sont
+invalidés lors d'un changement actif. Les tests n'exécutent ni collecte réelle
+ni entraînement complet : réponses simulées et 36 lignes/deux arbres.
+
+L'API partage le chargeur et les sept règles d'entrée de Streamlit :
+
+```powershell
+.\.venv-app\Scripts\python.exe -m uvicorn src.prediction_api:app --host 127.0.0.1 --port 8000
+curl.exe http://127.0.0.1:8000/health
+curl.exe -H "Content-Type: application/json" --data-binary "@examples/prediction.json" http://127.0.0.1:8000/predict
+```
+
+API documentée via `/openapi.json` et `/docs`. Docker Compose fournit les deux
+services, uniquement sur les ports locaux 8501 et 8000 ; trois CSV sont montés en
+lecture seule, les versions créées vont dans un volume partagé distinct.
+**Image construite et deux conteneurs testés avec succès.** Démarrer Docker Desktop
+avec moteur Linux/WSL2 si nécessaire, puis :
+
+```powershell
+.\scripts\check_docker_inputs.ps1
+docker compose build
+docker compose up -d
+docker compose run --rm --no-deps application python scripts/smoke_container.py --api-url http://api:8000
+docker compose down
+```
+
+Si 8501/8000 sont déjà occupés, préserver les services existants et utiliser la
+surcouche vérifiée : `docker compose -f compose.yaml -f compose.test.yaml up -d`,
+puis `docker compose -f compose.yaml -f compose.test.yaml down`. Elle lie uniquement
+127.0.0.1:18501 (application) et 127.0.0.1:18000 (API). C'est cette surcouche qui a
+été exécutée lors des tests, sans arrêter les services déjà présents.
+
+Ne pas utiliser `down -v` pour un arrêt normal : conserver le volume des versions.
+Le protocole d'apprentissage garde les réceptions depuis 2025 réservées au test :
+une collecte récente n'est pas automatiquement utilisée pour apprendre. Le
+nettoyage incrémental réutilise l'IQR par lot ; sa comparabilité reste une limite.
+
+Rendu éditable : [guide utilisateur](doc/guide_utilisateur.md),
+[documentation technique](doc/documentation_technique.md),
+[rapport ML final](doc/rapport_ml_final.md),
+[architecture Draw.io](doc/architecture.drawio),
+[scénario vidéo 4 min 50](doc/scenario_video.md),
+[matrice des exigences ouvertes](doc/exigences_rendu.md).
+Les trois Markdown principaux ont été rendus pour contrôler leurs longueurs :
+2, 2 et 5 pages. Les PDF de contrôle restent dans `output/submission/`, hors Git.
+
+```powershell
+.\.venv-app\Scripts\python.exe scripts/render_submission_docs.py
+```
+
+**Restent non confirmés visuellement : petit écran et Exploration après refonte**,
+ainsi que les derniers gestes de caméra et les nouveaux parcours Expert dans le
+navigateur. Le sujet complet n'est pas présent ; conformité formelle exhaustive,
+captation vidéo et déploiement restent ouverts. Aucun déploiement n'est exécuté.
+
 ## Application locale — Windows, Python 3.13
 
 L'application dispose de quatre pages en français : Contexte, Exploration,

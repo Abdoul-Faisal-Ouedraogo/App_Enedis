@@ -1,0 +1,29 @@
+<mxfile host="app.diagrams.net" version="24.7.17" type="device">
+  <diagram id="architecture-locale" name="Architecture locale Expert">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Habitat &amp; énergie — architecture locale Expert" style="text;html=1;fontSize=24;fontStyle=1;fontColor=#123e35;" vertex="1" parent="1"><mxGeometry x="80" y="30" width="1200" height="45" as="geometry"/></mxCell>
+        <mxCell id="user" value="Utilisateur local&#xa;actions explicites et confirmations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e5eee5;strokeColor=#155c43;fontSize=16;" vertex="1" parent="1"><mxGeometry x="480" y="100" width="330" height="70" as="geometry"/></mxCell>
+        <mxCell id="ui" value="Streamlit : 127.0.0.1:8501&#xa;Accueil · Exploration · Carte&#xa;Prédiction · Gestion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#155c43;fontColor=#ffffff;fontSize=16;" vertex="1" parent="1"><mxGeometry x="240" y="240" width="330" height="100" as="geometry"/></mxCell>
+        <mxCell id="api" value="FastAPI : 127.0.0.1:8000&#xa;/health · /predict · OpenAPI&#xa;validation des sept champs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#155c43;fontColor=#ffffff;fontSize=16;" vertex="1" parent="1"><mxGeometry x="760" y="240" width="330" height="100" as="geometry"/></mxCell>
+        <mxCell id="loader" value="Chargeur et prédiction communs&#xa;contrats · empreintes · caches versionnés&#xa;consommation et lettre indépendantes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eef3ec;strokeColor=#155c43;fontSize=16;" vertex="1" parent="1"><mxGeometry x="470" y="420" width="380" height="100" as="geometry"/></mxCell>
+        <mxCell id="original" value="Entrées d’origine — lecture seule&#xa;CSV préparé + métadonnées&#xa;Référentiel communal&#xa;MLmodels/final_geo_v1 préservé" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#e8f0f4;strokeColor=#476a7a;fontSize=15;" vertex="1" parent="1"><mxGeometry x="40" y="410" width="320" height="140" as="geometry"/></mxCell>
+        <mxCell id="registry" value="Registre local / volume partagé&#xa;active.json atomique + verrou&#xa;versions données / modèles&#xa;résultats, provenance et journaux" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#b09b38;fontSize=15;" vertex="1" parent="1"><mxGeometry x="1000" y="410" width="320" height="140" as="geometry"/></mxCell>
+        <mxCell id="collect" value="Actualisation volontaire&#xa;ADEME bornée + pagination/retries&#xa;préparation, doublons, remplacements&#xa;copie → bilan → validation → activation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e5eee5;strokeColor=#155c43;fontSize=15;" vertex="1" parent="1"><mxGeometry x="150" y="660" width="400" height="120" as="geometry"/></mxCell>
+        <mxCell id="train" value="Réentraînement volontaire&#xa;deux threads · protocole temporel/groupes&#xa;paramètres figés avant test réservé&#xa;version prête → activation séparée" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e5eee5;strokeColor=#155c43;fontSize=15;" vertex="1" parent="1"><mxGeometry x="770" y="660" width="430" height="120" as="geometry"/></mxCell>
+        <mxCell id="exports" value="Exports locaux : CSV · PNG · PDF&#xa;Docker : image locale + deux services&#xa;Aucun démarrage automatique de collecte/fit&#xa;Aucun déploiement ni publication" style="text;whiteSpace=wrap;html=1;fontSize=16;fontColor=#123e35;" vertex="1" parent="1"><mxGeometry x="430" y="860" width="600" height="100" as="geometry"/></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="user" target="ui" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="user" target="api" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="ui" target="loader" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="api" target="loader" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="original" target="loader" value="lecture" style="endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="registry" target="loader" value="version active" style="endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="ui" target="collect" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="ui" target="train" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="collect" target="registry" value="nouvelle copie" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="train" target="registry" value="nouveaux artefacts" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
