@@ -38,7 +38,7 @@ class Ademe_API_requester(BaseAPIRequester):
         import datetime
         import re
         import time
-        from urllib.parse import urlparse
+        from urllib.parse import urlparse, urljoin
         if not re.fullmatch(r"(?:\d{2,3}|2A|2B)", department):
             raise ValueError("Département invalide")
         first, last = datetime.date.fromisoformat(str(start)), datetime.date.fromisoformat(str(end))
@@ -51,6 +51,9 @@ class Ademe_API_requester(BaseAPIRequester):
                   "qs": f'code_departement_ban:"{department}" AND date_reception_dpe:[{first} TO {last}]'}
         rows, visited = [], set()
         while url and len(rows) < limit:
+            if not isinstance(url,str):
+                raise ValueError("Lien de pagination invalide")
+            url = urljoin(base + "/lines",url)
             parsed = urlparse(url)
             if parsed.scheme != "https" or parsed.netloc != "data.ademe.fr" or parsed.path != urlparse(base + "/lines").path:
                 raise ValueError("Lien de pagination ADEME non autorisé")

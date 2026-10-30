@@ -58,6 +58,15 @@ def test_timeout_retried_then_clear_failure():
     assert session.get.call_count == 3
 
 
+def test_relative_pagination_and_throttling():
+    session=Mock()
+    session.get.side_effect=[response({},429),response({"results":[raw_row("a")],"next":"?after=abc"}),response({"results":[raw_row("b")]})]
+    pauses=[]
+    rows=Ademe_API_requester().bounded_lines_by_date("69","2026-01-01","2026-01-30",2,session=session,sleep=pauses.append)
+    assert len(rows)==2 and session.get.call_count==3
+    assert 1 in pauses and .25 in pauses
+
+
 def test_server_must_respect_filters():
     session = Mock()
     session.get.return_value = response({"results":[raw_row(code_departement_ban="75")]})

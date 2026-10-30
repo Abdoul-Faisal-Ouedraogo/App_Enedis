@@ -78,7 +78,8 @@ def context(df):
                  "ou remplacée par la moyenne départementale des communes du référentiel. Les sous-zones ne sont pas inventées. "
                  "Les positions BAN ne certifient pas l’adresse ; plusieurs logements peuvent se superposer.")
     with st.expander("Détail des données chargées et méthode"):
-        st.caption("Lecture locale : output/cleaned_data.csv. Aucun appel API, téléchargement ou entraînement au démarrage.")
+        from src.version_store import VersionStore
+        st.caption("Version de données chargée : " + VersionStore().active()["data"] + ". Aucun appel API, téléchargement ou entraînement au démarrage.")
         if df is not None:
             st.dataframe(pd.DataFrame({"Variable": [LABELS.get(c,c) for c in df], "Colonne technique": df.columns,
                                        "Valeurs absentes": df.isna().sum().values}), hide_index=True, width="stretch")

@@ -70,7 +70,14 @@ class VersionStore:
     def data_paths(self, version=None, check=True):
         version = version or self.active()["data"]
         if version == "initial":
-            return ROOT / "output/cleaned_data.csv", ROOT / "output/cleaned_data_metadata.csv"
+            paths = ROOT / "output/cleaned_data.csv", ROOT / "output/cleaned_data_metadata.csv"
+            if check:
+                if not all(path.is_file() for path in paths):
+                    raise ValueError("Entrées initiales absentes : fournir CSV préparé et métadonnées")
+                protocol=json.loads((ROOT/"MLmodels/final_geo_v1/frozen_protocol.json").read_text(encoding="utf-8"))
+                if sha256(paths[0])!=protocol["data_sha256"] or sha256(paths[1])!=protocol["metadata_sha256"]:
+                    raise ValueError("Entrées initiales différentes de la référence validée")
+            return paths
         folder = self.folder("datasets", version)
         info = self.manifest("datasets", version)
         if info["status"] != "validated":
