@@ -1,0 +1,7 @@
+# Surcouche locale pour vérifier sans arrêter les applications déjà sur 8501/8000.
+# Nécessite Docker Compose >= 2.24.4 pour !override.
+services:
+  application:
+    ports: !override ["127.0.0.1:18501:8501"]
+  api:
+    ports: !override ["127.0.0.1:18000:8000"]

@@ -21,6 +21,10 @@
 **/*.pyc
 **/.env*
 **/secrets.toml
+**/*secret*
+**/*credential*
+**/*.pem
+**/*.key
 **/*.csv
 **/*.pdf
 **/*.log
